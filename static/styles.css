@@ -1,0 +1,13 @@
+.container {
+    width: 50%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+input[type="file"] {
+    margin: 20px 0;
+}
+
+h2 {
+    color: green;
+}

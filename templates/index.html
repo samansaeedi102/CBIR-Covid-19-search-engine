@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Image</title>
+    <script>
+        function uploadFile(event) {
+            event.preventDefault();
+            var formData = new FormData();
+            var fileInput = document.getElementById('file');
+            var method = document.getElementById('method').value;
+            formData.append('file', fileInput.files[0]);
+            formData.append('method', method);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    var resultHTML = 'Top similar images:<br>';
+                    data.top_images.forEach(function(item) {
+                        resultHTML += 'Image: ' + item[0] + ' - Similarity: ' + item[1].toFixed(2) + '<br>';
+                    });
+                    resultHTML += '<br>Feature extraction time: ' + data.extraction_time.toFixed(2) + ' seconds<br>';
+                    document.getElementById('results').innerHTML = resultHTML;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function previewFile() {
+            var preview = document.getElementById('queryImage'); // The image element
+            var file    = document.getElementById('file').files[0]; // The file input element
+            var reader  = new FileReader();
+
+            reader.onloadend = function () {
+                preview.src = reader.result;
+            }
+
+            if (file) {
+                reader.readAsDataURL(file); // Reads the data as a URL
+            } else {
+                preview.src = "";
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Upload an Image</h1>
+    <form id="uploadForm" onsubmit="uploadFile(event)">
+        <label for="file">Choose image to upload</label>
+        <input type="file" id="file" name="file" accept="image/*" onchange="previewFile()">
+        <br><br>
+        <img id="queryImage" src="" alt="Query Image" style="max-width: 300px; max-height: 300px;"/>
+        <br><br>
+        <label for="method">Choose method:</label>
+        <select id="method" name="method">
+            <option value="custom">Custom Method</option>
+            <option value="vgg16">VGG16 Method</option>
+            <option value="vgg19">VGG19 Method</option>
+            <option value="xception">Xception Method</option>
+            <option value="inception">Inception Method</option>
+        </select>
+        <br><br>
+        <input type="submit" value="Upload Image">
+    </form>
+    <div id="results"></div>
+</body>
+</html>
