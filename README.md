@@ -65,6 +65,7 @@ To run the feature extractor for each model and save the `.h5` files in the `dat
     ```sh
     cd models/xception
     ```
+    ```sh
     cd models/basic
     ```
 
